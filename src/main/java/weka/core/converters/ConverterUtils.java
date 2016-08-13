@@ -693,7 +693,9 @@ public class ConverterUtils implements Serializable, RevisionHandler {
     + ","
     + weka.core.converters.TextDirectoryLoader.class.getName()
     + ","
-    + weka.core.converters.XRFFLoader.class.getName();
+    + weka.core.converters.XRFFLoader.class.getName()
+    + ","
+    + weka.core.converters.XlsLoader.class.getName();
 
   /**
    * the core savers - hardcoded list necessary for RMI/Remote Experiments

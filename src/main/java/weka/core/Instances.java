@@ -194,6 +194,10 @@ RevisionHandler {
     initialize(dataset, capacity);
   }
 
+    public Instances() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
   /**
    * initializes with the header information of the given dataset and sets the
    * capacity of the set of instances.

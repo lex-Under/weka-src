@@ -77,4 +77,3 @@ public class ArffTest
     junit.textui.TestRunner.run(suite());
   }
 }
-
