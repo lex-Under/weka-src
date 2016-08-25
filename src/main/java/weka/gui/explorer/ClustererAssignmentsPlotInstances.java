@@ -154,7 +154,6 @@ public class ClustererAssignmentsPlotInstances extends AbstractPlotInstances {
     numClusters = m_Evaluation.getNumClusters();
     hv = new ArrayList<Attribute>();
     clustVals = new ArrayList<String>();
-
     for (i = 0; i < numClusters; i++) {
       clustVals.add("cluster" + /* (i+1) */i);
     }

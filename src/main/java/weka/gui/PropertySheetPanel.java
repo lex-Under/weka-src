@@ -21,6 +21,7 @@
 
 package weka.gui;
 
+import com.sun.beans.editors.BooleanEditor;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dialog;
@@ -712,7 +713,6 @@ public class PropertySheetPanel extends JPanel implements
         // Object args[] = { };
         Object value = getter.invoke(m_Target, args);
         m_Values[sortedPropOrderings[i]] = value;
-
         PropertyEditor editor = null;
         Class<?> pec = m_Properties[sortedPropOrderings[i]].getPropertyEditorClass();
         if (pec != null) {

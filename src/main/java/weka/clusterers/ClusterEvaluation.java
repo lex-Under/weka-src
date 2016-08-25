@@ -195,7 +195,7 @@ public class ClusterEvaluation implements Serializable, RevisionHandler {
 
   /**
    * Constructor. Sets defaults for each member variable. Default Clusterer is
-   * EM.
+   * SimpleKMeans.
    */
   public ClusterEvaluation() {
     setClusterer(new SimpleKMeans());
@@ -346,7 +346,6 @@ public class ClusterEvaluation implements Serializable, RevisionHandler {
     }
     int numInstFieldWidth =
       (int) ((Math.log(clusterAssignments.size()) / Math.log(10)) + 1);
-
     if (outputModel) {
       m_clusteringResults.append(m_Clusterer.toString());
     }

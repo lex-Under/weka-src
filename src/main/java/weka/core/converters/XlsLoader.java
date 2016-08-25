@@ -260,6 +260,9 @@ public class XlsLoader extends AbstractFileLoader implements BatchConverter {
                 errorMessage("no header information available");
             }
             // Check if end of file reached.
+            if (currentRow == null) {
+                return null;
+            }
             currentCell = currentRow.getCell(attributeColumnNums.get(0));
             if (currentCell == null || currentCell.getCellType() == Cell.CELL_TYPE_BLANK) {
                 return null;
@@ -282,7 +285,9 @@ public class XlsLoader extends AbstractFileLoader implements BatchConverter {
                 }
                 j++;
             }
-            res.setWeight(currentRow.getCell(weightColumnNum).getNumericCellValue());
+            if (weightColumnNum > -1) {
+                res.setWeight(currentRow.getCell(weightColumnNum).getNumericCellValue());
+            }
             return res;
         }
 

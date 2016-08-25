@@ -201,10 +201,10 @@ public class MatrixPanel extends JPanel {
   private final ArrayList<Color> m_colorList = new ArrayList<Color>();
 
   /** default colour list */
-  private static final Color[] m_defaultColors = { Color.blue, Color.red,
-    Color.cyan, new Color(75, 123, 130), Color.pink, Color.green, Color.orange,
-    new Color(255, 0, 255), new Color(255, 0, 0), new Color(0, 255, 0),
-    Color.black };
+  private static final Color[] m_defaultColors = { Color.blue, Color.red, Color.cyan, Color.green,
+      new Color(75, 123, 130), Color.pink, Color.orange, Color.darkGray,
+      new Color(255, 0, 255), Color.yellow, Color.magenta, Color.gray,
+      Color.black };
 
   /** color for the font used in column and row names */
   private final Color fontColor = new Color(98, 101, 156);
@@ -785,8 +785,10 @@ public class MatrixPanel extends JPanel {
       if (args.length == 1) {
         data = new Instances(new BufferedReader(new FileReader(args[0])));
       } else {
-        System.out.println("Usage: MatrixPanel <arff file>");
-        System.exit(-1);
+        String tmp = "C:\\Users\\alexUnder\\Desktop\\Практика\\correct.arff";
+        data = new Instances(new BufferedReader(new FileReader(tmp)));
+        //System.out.println("Usage: MatrixPanel <arff file>");
+        //System.exit(-1);
       }
     } catch (IOException ex) {
       ex.printStackTrace();
