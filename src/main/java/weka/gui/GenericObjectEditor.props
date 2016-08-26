@@ -565,3 +565,6 @@ weka.core.stopwords.StopwordsHandler=\
   weka.core.stopwords.RegExpFromFile,\
   weka.core.stopwords.WordsFromFile
  
+# Lists the FunctionInfo I want to use to describe
+weka.clusterers.FunctionInfo=\
+ weka.clusterers.LinearFunctionInfo

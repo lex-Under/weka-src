@@ -15,14 +15,8 @@ import weka.core.Utils;
  */
 public abstract class FuncDependableClusterer extends AbstractClusterer implements OptionHandler {
 
-    public enum FuncType {
-        pointSet,
-        linear,
-        polynomial
-    }
-
-    static protected FuncType funcType_default = FuncType.linear;
-    protected FuncType funcType = funcType_default;
+    static protected FunctionInfo functionInfo_default = (FunctionInfo)(new LinearFunctionInfo());
+    protected FunctionInfo functionInfo = functionInfo_default;
     
     /**
      * Parses a given list of options. Valid options are:
@@ -35,12 +29,18 @@ public abstract class FuncDependableClusterer extends AbstractClusterer implemen
     public void setOptions(String[] options) throws Exception {
         String tmpStr;
 
-        tmpStr = Utils.getOption("FT", options);
+        tmpStr = Utils.getOption("FI", options);
         if (tmpStr.length() != 0) {
-            setFuncType(readFuncTypeFromName(tmpStr));
-        } //else {
-          //  setFuncType(m_SeedDefault);
-        //}
+            String distFunctionClassSpec[] = Utils.splitOptions(tmpStr);
+            if (distFunctionClassSpec.length == 0) {
+                throw new Exception("Invalid FunctionInfo specification string.");
+            }
+            String className = distFunctionClassSpec[0];
+            distFunctionClassSpec[0] = "";
+
+            setFunctionInfo((FunctionInfo) Utils.forName(
+                    FunctionInfo.class, className, distFunctionClassSpec));
+        }
 
         super.setOptions(options);
     }
@@ -54,9 +54,10 @@ public abstract class FuncDependableClusterer extends AbstractClusterer implemen
     public String[] getOptions() {
 
         Vector<String> result = new Vector<String>();
-
-        result.add("-FT");
-        result.add("" + getFuncType());
+        
+        result.add("-FI");
+        result.add((functionInfo.getClass().getName() + " " + Utils
+                .joinOptions(functionInfo.getOptions())).trim());
 
         Collections.addAll(result, super.getOptions());
 
@@ -69,42 +70,24 @@ public abstract class FuncDependableClusterer extends AbstractClusterer implemen
      * @return tip text for this property suitable for displaying in the
      * explorer/experimenter gui
      */
-    public String funcTypeTipText() {
-        return "The function's type for function-dependable clustering.";
+    public String functionInfoTipText() {
+        return "The function's type and general parameters for function-dependable clustering.";
     }
 
     /**
      * Sets the function's type for this clustering
      */
-    public void setFuncType(FuncType funcType) {
-        this.funcType = funcType;
-    }
-
-    public void setFuncType(String funcTypeName) {
-        setFuncType(readFuncTypeFromName(funcTypeName));
+    public void setFunctionInfo(FunctionInfo newFunctionInfo) {
+        this.functionInfo = newFunctionInfo;
     }
     
-    private FuncType readFuncTypeFromName(String funcTypeName) {
-        funcTypeName = funcTypeName.toLowerCase();
-        switch (funcTypeName) {
-            case ("pointset"):
-                return FuncType.pointSet;
-            case ("linear"):
-                return FuncType.linear;
-            case ("polynomial"):
-                return FuncType.polynomial;
-            default:
-                throw new IllegalArgumentException("Неизвестное имя типа функции: \"" + funcTypeName + "\". Либо имя не поддерживается пока что.");
-        }
-    }
-
     /**
-     * Gets the function's type for this clustering
+     * Gets the function for this clusterer
      *
-     * @return the function's type for this clustering
+     * @return the function for this clusterer
      */
-    public FuncType getFuncType() {
-        return funcType;
+    public FunctionInfo getFunctionInfo() {
+        return functionInfo;
     }
     
     /**

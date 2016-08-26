@@ -7,15 +7,11 @@ package weka.clusterers;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Vector;
 import weka.core.Capabilities;
 import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
-import weka.clusterers.FuncDependableClusterer.FuncType;
-import weka.core.Utils;
 
 /**
  *
@@ -24,14 +20,8 @@ import weka.core.Utils;
 public class MyClusterer extends FuncDependableClusterer {
 
     Point2D.Double[] funcPoints;
-    
-    protected int accuracyFactor=1000;
-    protected Double xLeft=0d;
-    protected Double xRight=1d;
-    protected Double yLeft=0d;
-    protected Double yRight=1d;
-    
-    HashMap<Instance, Integer> instanceToClusterNumber = new HashMap<>();
+    ////////
+    HashMap<Instance, Integer> instancesToClusterNumber = new HashMap<>();
     HashMap<ArrayList<Instance>, Instance> clustersToCentroid = new HashMap<>();
     int curClusterNum = 0;
     ////////
@@ -86,7 +76,7 @@ public class MyClusterer extends FuncDependableClusterer {
                 newCluster.add(inst);
                 addToThisCluster = newCluster;
                 thisNewCentroid = inst;
-                instanceToClusterNumber.put(inst, curClusterNum++);
+                instancesToClusterNumber.put(inst, curClusterNum++);
                 clustersToCentroid.put(newCluster, thisNewCentroid);
                 //clustersToCentroid.
             } else //иначе - обновить хешмапы и прочее другими значениями
@@ -94,7 +84,7 @@ public class MyClusterer extends FuncDependableClusterer {
                 clustersToCentroid.remove(addToThisCluster);    //Такой порядок
                 addToThisCluster.add(inst);                     //обязателен !!
                 clustersToCentroid.put(addToThisCluster, thisNewCentroid);
-                instanceToClusterNumber.put(inst, instanceToClusterNumber.get(addToThisCluster.get(0)));
+                instancesToClusterNumber.put(inst, instancesToClusterNumber.get(addToThisCluster.get(0)));
             }
         }
     }
@@ -166,7 +156,7 @@ public class MyClusterer extends FuncDependableClusterer {
      */
     @Override
     public int clusterInstance(Instance instance) throws Exception {
-        return instanceToClusterNumber.get(instance);
+        return instancesToClusterNumber.get(instance);
     }
 
     @Override
@@ -184,113 +174,24 @@ public class MyClusterer extends FuncDependableClusterer {
     
     @Override
     public void funcInit(){
-        switch (funcType){
-            case linear:
-                funcInitLinear();
-                break;
-            default:
-                throw new IllegalArgumentException("Тип функции \"" + funcType+"\" пока не поддерживается");
+        if (functionInfo instanceof LinearFunctionInfo){
+            funcInitLinear();
         }
+        else throw new IllegalArgumentException("Метаданные о функции типа \"" + functionInfo+"\" не поддерживаются пока что.");
     }
     
     public void funcInitLinear(){
+        LinearFunctionInfo lfi = (LinearFunctionInfo) functionInfo;
+        int accuracyFactor = lfi.getAccuracyFactor();
+        Double xMax = lfi.getXMax();
+        Double xMin = lfi.getXMin();
+        Double yMax = lfi.getYMax();
+        Double yLeft = lfi.getYMin();
         funcPoints = new Point2D.Double[accuracyFactor];
-        Double xStep=(xRight-xLeft)/accuracyFactor;
-        Double yStep=(yRight-yLeft)/accuracyFactor;
+        Double xStep=(xMax-xMin)/accuracyFactor;
+        Double yStep=(yMax-yLeft)/accuracyFactor;
         for (int i = 0; i < funcPoints.length; i++) {
-            funcPoints[i] = new Point2D.Double(xLeft+i*xStep, yLeft+i*yStep);
+            funcPoints[i] = new Point2D.Double(xMin+i*xStep, yLeft+i*yStep);
         }
-    }
-    
-    /**
-     * Parses a given list of options. Valid options are:
-     * <p>
-     *
-     * @param options the list of options as an array of strings
-     * @throws Exception if an option is not supported
-     */
-    @Override
-    public void setOptions(String[] options) throws Exception {
-        String tmpStr;
-
-        tmpStr = Utils.getOption("xl", options);
-        if (tmpStr.length() != 0) {
-            setXLeft(Double.valueOf(tmpStr));
-        }
-        tmpStr = Utils.getOption("xr", options);
-        if (tmpStr.length() != 0) {
-            setXRight(Double.valueOf(tmpStr));
-        }
-        tmpStr = Utils.getOption("yl", options);
-        if (tmpStr.length() != 0) {
-            setYLeft(Double.valueOf(tmpStr));
-        }
-        tmpStr = Utils.getOption("yr", options);
-        if (tmpStr.length() != 0) {
-            setYRight(Double.valueOf(tmpStr));
-        }
-        tmpStr = Utils.getOption("AF", options);
-        if (tmpStr.length() != 0) {
-            setAccuracyFactor(Integer.valueOf(tmpStr));
-        }
-        
-        super.setOptions(options);
-    }
-
-    /**
-     * Gets the current settings of the classifier.
-     *
-     * @return an array of strings suitable for passing to setOptions
-     */
-    @Override
-    public String[] getOptions() {
-
-        Vector<String> result = new Vector<String>();
-
-        result.add("-xl");
-        result.add("" + getXLeft());
-        result.add("-xr");
-        result.add("" + getXRight());
-        result.add("-yl");
-        result.add("" + getYLeft());
-        result.add("-yr");
-        result.add("" + getYRight());
-        result.add("-AF");
-        result.add("" +getAccuracyFactor());
-
-        Collections.addAll(result, super.getOptions());
-
-        return result.toArray(new String[result.size()]);
-    }
-    
-    public int getAccuracyFactor(){
-        return accuracyFactor;
-    }
-    public Double getXLeft(){
-        return xLeft;
-    }
-    public Double getXRight(){
-        return xRight;
-    }
-    public Double getYLeft(){
-        return yLeft;
-    }
-    public Double getYRight(){
-        return yRight;
-    }
-    public void setAccuracyFactor(int newAccFact){
-        accuracyFactor=newAccFact;
-    }
-    public void setXLeft(Double newXLeft){
-        xLeft= newXLeft;
-    }
-    public void setXRight(Double newXRight){
-        xRight = newXRight;
-    }
-    public void setYLeft(Double newYLeft){
-        yLeft= newYLeft;
-    }
-    public void setYRight(Double newYRight){
-        yRight=newYRight;
     }
 }

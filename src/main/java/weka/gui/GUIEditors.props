@@ -79,6 +79,7 @@ weka.associations.Associator=weka.gui.GenericObjectEditor
 # clusterers
 weka.clusterers.Clusterer=weka.gui.GenericObjectEditor
 weka.clusterers.DensityBasedClusterer=weka.gui.GenericObjectEditor
+weka.clusterers.FunctionInfo=weka.gui.GenericObjectEditor
 
 # attribute selection
 weka.attributeSelection.ASEvaluation=weka.gui.GenericObjectEditor
